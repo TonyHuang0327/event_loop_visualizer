@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Loop Visualizer</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="event-loop-container">
+        <div class="label-container">
+          <h3>Call Stack</h3>
+          <div class="callstack-container"></div>
+        </div>
+        <div class="label-container">
+          <h3>Microtasks</h3>
+          <div class="microtask-container"></div>
+        </div>
+        <div class="label-container">
+          <h3>Macrotasks</h3>
+          <div class="macrotask-container"></div>
+        </div>
+      </div>
+      <label for="javascript-code-input"
+        >Enter your javascript code here:</label
+      >
+      <textarea id="javascript-code-input" rows="10" cols="80"></textarea>
+      <button id="button">Run</button>
+    </div>
+    <div class="label-container">
+      <h3>Logs</h3>
+      <div class="log-container"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
