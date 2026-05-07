@@ -7,7 +7,6 @@
     <title>Event Loop Visualizer</title>
   </head>
   <body>
-    <div class="container">
       <div class="event-loop-container">
         <div class="label-container">
           <h3>Call Stack</h3>
@@ -22,16 +21,14 @@
           <div class="macrotask-container"></div>
         </div>
       </div>
-      <label for="javascript-code-input"
-        >Enter your javascript code here:</label
-      >
-      <textarea id="javascript-code-input" rows="10" cols="80"></textarea>
+      <div class="javascript-code-area">
+        <div class="javascript-code-area-content">console.log('1')</div>
+        <div class="javascript-code-area-content">setTimeout(() => console.log('2'), 0)</div>
+        <div class="javascript-code-area-content">Promise.resolve().then(() => console.log('3'))</div>
+        <div class="javascript-code-area-content">queueMicrotask(() => console.log('4'))</div>
+        <div class="javascript-code-area-content">console.log('5')</div>
+      </div>
       <button id="button">Run</button>
-    </div>
-    <div class="label-container">
-      <h3>Logs</h3>
-      <div class="log-container"></div>
-    </div>
     <script src="script.js"></script>
   </body>
 </html>
