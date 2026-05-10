@@ -1,4 +1,7 @@
 const button = document.getElementById("button");
+const callstackContainer = document.querySelector(".callstack-container");
+const microtaskContainer = document.querySelector(".microtask-container");
+const macrotaskContainer = document.querySelector(".macrotask-container");
 // 先跑同步；之後每輪：清空 microtasks -> 執行 1 個 macrotask -> 再清空 microtasks
 button.addEventListener("click", () => {
   console.log("button clicked");
@@ -10,44 +13,64 @@ button.addEventListener("click", () => {
   runEventLoop(codes);
 });
 
-const runEventLoop = (codes) => {
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+const runEventLoop = async(codes) => {
   const callStack = [];
   const microtasks = [];
   const macrotasks = [];
-  console.log("分類 event loop");
   for (const code of codes) {
-    if (code.startsWith("setTimeout")) {
+    if (code.startsWith("console.log")) {
+      callStack.push(code);
+      renderAll(callStack, microtasks, macrotasks);
+      await sleep(600);
+      console.log("執行", code);
+      callStack.pop();
+      renderAll(callStack, microtasks, macrotasks);
+      await sleep(600);
+    } else if (code.startsWith("setTimeout")) {
       macrotasks.push(code);
+      renderAll(callStack, microtasks, macrotasks);
+      await sleep(600);
     } else if (
       code.startsWith("Promise") ||
       code.startsWith("queueMicrotask")
     ) {
       microtasks.push(code);
-    } else {
-      callStack.push(code);
+      renderAll(callStack, microtasks, macrotasks);
+      await sleep(600);
+    }
+  };
+  while (microtasks.length > 0) {
+    console.log("執行", microtasks.shift());
+    renderAll(callStack, microtasks, macrotasks);
+    await sleep(600);
+  }
+  while (macrotasks.length > 0) {
+    console.log("執行", macrotasks.shift());
+    renderAll(callStack, microtasks, macrotasks);
+    await sleep(600);
+    while (microtasks.length > 0) {
+      console.log("執行", microtasks.shift());
+      renderAll(callStack, microtasks, macrotasks);
+      await sleep(600);
     }
   }
-  console.log("執行 event loop");
-  flushCallStack(callStack);
-  flushMicrotasks(microtasks);
-  flushMacrotasks(macrotasks, microtasks);
+  renderAll(callStack, microtasks, macrotasks);
 };
-const flushMicrotasks = (microtasks) => {
-  while (microtasks.length > 0) {
-    const task = microtasks.shift();
-    console.log(task);
-  }
+
+const renderQueues = (container, tasks) => {
+  container.replaceChildren();
+  tasks.forEach((task) => {
+    const taskElement = document.createElement("div");
+    taskElement.textContent = task;
+    taskElement.className = "task-item";
+    container.appendChild(taskElement);
+  });
 };
-const flushMacrotasks = (macrotasks, microtasks) => {
-  while (macrotasks.length > 0) {
-    const task = macrotasks.shift();
-    console.log(task);
-    flushMicrotasks(microtasks);
-  }
-};
-const flushCallStack = (callStack) => {
-  while (callStack.length > 0) {
-    const task = callStack.shift();
-    console.log(task);
-  }
+
+const renderAll = (callStack, microtasks, macrotasks) => {
+  renderQueues(callstackContainer, callStack);
+  renderQueues(microtaskContainer, microtasks);
+  renderQueues(macrotaskContainer, macrotasks);
 };
